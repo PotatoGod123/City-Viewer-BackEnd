@@ -50,6 +50,7 @@ function weatherFunction(request,response){
   });
   if(flagTrigger){
     response.send(invalidInput());
+    flagTrigger=false;
   }else{
     response.send(weatherHolderArray);
   }
