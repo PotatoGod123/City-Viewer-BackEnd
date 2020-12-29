@@ -65,5 +65,7 @@ Using Javascript with Node.js and it's libraries and a couple of dependecies(dot
 ## Change Log
 <!-- Use this area to document the iterative changes made to your application as each feature is successfully implemented. Use time stamps. Here's an examples: !-->
 
-12-23-2020 11:45pm - Application now has a fully-functional express server, with a GET route for the location resource. When couple of fall backs as to when not desirable inputs happen.  
+12-23-2020 12:05am Ver: 1.1.1 - Fixed bug happening with flag trigger staying to true so if statement wouldn't allow proper response to be sent
+
+12-23-2020 11:45pm Ver: 1.1.0- Application now has a fully-functional express server, with a GET route for the location resource. When couple of fall backs as to when not desirable inputs happen.  
 
