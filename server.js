@@ -74,7 +74,8 @@ function Location(city,data){
 
 function WeatherInfo(data){
   this.forecast = data.weather.description;
-  this.time =data.valid_date;
+  let newData = Date(data.valid_date);
+  this.time = new Date(newData).toDateString();
 }
 
 
