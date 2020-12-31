@@ -19,7 +19,7 @@ This project will be using a pre built front end website to test out the functio
 
 ## Getting Started
 
-Number and name of feature:
+### Number and name of feature:
 
 1. Repository Set Up
 
@@ -44,15 +44,15 @@ Finish time: 10:30pm
 Actual time needed to complete: 1 Hour 30mins  
 
 
-Number and name of feature: ________________________________
+3. Refactored code to request data from an api and send that back as a response instead of using pre set json files.
 
-Estimate of time needed to complete: _____
+Estimate of time needed to complete: 3 Hours
 
-Start time: _____
+Start time: 09:00pm
 
-Finish time: _____
+Finish time: 10:40pm
 
-Actual time needed to complete: _____   
+Actual time needed to complete: 1 Hour 40mins
 
 
 
@@ -61,9 +61,14 @@ Actual time needed to complete: _____
 
 
 ## Architecture
-Using Javascript with Node.js and it's libraries and a couple of dependecies(dotenv,express,cors).
+Using Javascript with Node.js and it's libraries and a couple of dependecies(dotenv,express,cors).  
+
+### WRRC 
+![My WRRC drawned](./img/WRRC-lab07.png)  
+
 ## Change Log
 <!-- Use this area to document the iterative changes made to your application as each feature is successfully implemented. Use time stamps. Here's an examples: !-->
+12-30-2020 10:40pm Ver 1.2.0  - Changed API to request from other APIs and use the promise data to convert and send back as a response to the front end request
 
 12-23-2020 12:05am Ver: 1.1.1 - Fixed bug happening with flag trigger staying to true so if statement wouldn't allow proper response to be sent
 

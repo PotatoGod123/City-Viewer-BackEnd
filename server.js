@@ -1,83 +1,90 @@
 'use strict';
 //require dependecies
 require('dotenv').config();
-const express= require('express');
+const express = require('express');
 const cors = require('cors');
+const superagent = require('superagent');
 //global variable
 //this is a flag trigger,used in locationFunction and weatherFunction
 let flagTrigger = false;
 
 //using dependecies and setting up server
 const app = express();
-const PORT= process.env.PORT;
+const PORT = process.env.PORT;
 app.use(cors());
 
-app.get('/',rootRequest);
+app.get('/', rootRequest);
 
 app.get('/location', locationFunction);
 
 app.get('/weather', weatherFunction);
 
-app.use('*',catchAllRequest);
+app.use('*', catchAllRequest);
 //function handlers
 //testing server
-function rootRequest(request, response){
+function rootRequest(request, response) {
   response.send('hello world');
 }
-function catchAllRequest(request,response){
+function catchAllRequest(request, response) {
   response.send('404, sowwrryyyyyy');
 }
 
 //this funciont  will get location data when requested
-function locationFunction(request, response){
-  const data= require('./data/location.json');
-  const city= request.query.city;
-  const locationData = new Location(city,data);
-  if(city==="" || city===" "){
-    response.send(invalidInput());
-    flagTrigger = true;
-  }else{
-    response.send(locationData);
+function locationFunction(request, response) {
+  const city = request.query.city;
+  let key = process.env.GEODUDE_API_KEY;
+  const url = `https://us1.locationiq.com/v1/search.php?key=${key}&q=${city}&format=json`;
+
+  if (city === '' || city === ' ') {
+    invalidInput(response);
+  } else {
+    superagent.get(url)
+      .then(data => {
+        response.send(new Location(city, data.body[0]));
+      });
+    flagTrigger = false;
   }
 }
 
 //this function will send back weather information
-function weatherFunction(request,response){
-  const data= require('./data/weather.json');
-  const weatherHolderArray= [];
-  data.data.forEach(val =>{
-    weatherHolderArray.push(new WeatherInfo(val));
-  });
-  if(flagTrigger){
-    response.send(invalidInput());
-    flagTrigger=false;
-  }else{
-    response.send(weatherHolderArray);
+function weatherFunction(request, response) {
+  const key = process.env.WEATHER_API_KEY;
+  const lat = request.query.latitude;
+  const lon = request.query.longitude;
+  const url = `http://api.weatherbit.io/v2.0/forecast/daily?&lat=${lat}&lon=${lon}&key=${key}`;
+
+  if (flagTrigger) {
+    invalidInput(response);
+  } else {
+    superagent.get(url)
+      .then(promise=>{
+        const dataTest = promise.body.data.map(val => {
+          return new WeatherInfo(val);
+        });
+        response.send(dataTest);
+      });
   }
 }
 //this will a helper function for above
-function invalidInput(){
-  const errorArray = {
-    status:'500',
-    responseText: 'Sorry, something went wrong',
-  };
-  return errorArray;
+function invalidInput(send) {
+  flagTrigger = true;
+  return send.status(500).send('Sorry, something went wrong');
 }
 //constructors
 
-function Location(city,data){
+function Location(city, data) {
   this.search_query = city;
-  this.formatted_query= data[0].display_name;
-  this.latitude = data[0].lat;
-  this.longitude = data[0].lon;
+  this.formatted_query = data.display_name;
+  this.latitude = data.lat;
+  this.longitude = data.lon;
 }
 
-function WeatherInfo(data){
+function WeatherInfo(data) {
   this.forecast = data.weather.description;
   this.time = new Date(data.valid_date).toDateString();
 }
 
 
-app.listen(PORT, ()=>{
+app.listen(PORT, () => {
   console.log(`now listening on port,${PORT}`);
 });
