@@ -5,7 +5,7 @@ This project will be using a pre built front end website to test out the functio
 
 
 
-**Version**: 1.1.1
+**Version**: 1.3.0
 
 # Contribution
 
@@ -54,20 +54,32 @@ Finish time: 10:40pm
 
 Actual time needed to complete: 1 Hour 40mins
 
+4. Made a databased and refactored code to use database information in conjuction of api's.
 
+Estimate of time needed to complete: 3 Hours
 
+Start Time: 09:30pm
 
+Finish Time: 01:20am
 
+Actual time neeeded to comeplete: 2 Hours 30mins
 
 
 ## Architecture
 Using Javascript with Node.js and it's libraries and a couple of dependecies(dotenv,express,cors).  
 
 ### WRRC 
+This is an image of WRRC for lab07
 ![My WRRC drawned](./img/WRRC-lab07.png)  
+
+This image is the WRRC but with a database added now
+![WRRC with Database](./img/WRRC-lab08.png)  
+
 
 ## Change Log
 <!-- Use this area to document the iterative changes made to your application as each feature is successfully implemented. Use time stamps. Here's an examples: !-->
+01-07-2021 1:20am Ver 1.3.0 - Changed server code to use a database now, refactored code to only call API is information is not the database already, And if it is, it will use the date from there. Added schema.sql file as well.
+
 12-30-2020 10:40pm Ver 1.2.0  - Changed API to request from other APIs and use the promise data to convert and send back as a response to the front end request
 
 12-23-2020 12:05am Ver: 1.1.1 - Fixed bug happening with flag trigger staying to true so if statement wouldn't allow proper response to be sent
