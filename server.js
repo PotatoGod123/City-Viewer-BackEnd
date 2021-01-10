@@ -25,6 +25,8 @@ app.get('/location', locationFunction);
 
 app.get('/weather', weatherFunction);
 
+app.get('/movies', moviesFunction);
+
 app.use('*', catchAllRequest);
 //function handlers
 //testing server
@@ -63,12 +65,54 @@ function weatherFunction(request, response) {
         const dataTest = promise.body.data.map(val => {
           return new WeatherInfo(val);
         });
-        response.send(dataTest);
+        response.status(200).send(dataTest);
       }).catch(error => {
         console.log(error);
       });
   }
 }
+
+//this one sends the movies data from API
+
+
+function moviesFunction(request, response) {
+  const key = process.env.MOVIES_API_KEY;
+
+  
+  //the query filters
+  const queryObj = {
+    api_key : key,
+    query : request.query.search_query,
+    include_adult: false
+  };
+
+  
+  const url = 'https://api.themoviedb.org/3/search/movie';
+
+  if (flagTrigger) {
+    invalidInput(response);
+  } else {
+    superagent.get(url)
+      .query(queryObj)
+      .then( data =>{
+        const dataHolder = data.body.results;
+        if(dataHolder>20){
+          dataHolder.length = 20;
+        }
+        const movieHolder = dataHolder.map(val=>{
+          return new MovieInfo(val);
+        });
+
+        response.status(200).send(movieHolder);
+      }).catch(error=>{
+        console.log(error);
+      });
+  }
+
+
+
+}
+
 //these will be a helper functions
 function invalidInput(send) {
   flagTrigger = true;
@@ -76,8 +120,8 @@ function invalidInput(send) {
 }
 
 function checkForDatabaseLocation(city, response, url) {
-  const firstSQL = `SELECT * FROM location WHERE searchquery LIKE '${city}'`;
-  const secondSQL = 'INSERT INTO location (searchquery,formattedquery,latitude,longitude) VALUES ($1,$2,$3,$4)';
+  const firstSQL = `SELECT * FROM location WHERE search_query LIKE '${city}'`;
+  const secondSQL = 'INSERT INTO location (search_query,formattedquery,latitude,longitude) VALUES ($1,$2,$3,$4)';
 
   client.query(firstSQL)
     .then(data => {
@@ -86,13 +130,13 @@ function checkForDatabaseLocation(city, response, url) {
           .then(data => {
             const newLocationInstance = new Location(city, data.body[0]);
             const safeQuery = [newLocationInstance.search_query, newLocationInstance.formatted_query, newLocationInstance.latitude, newLocationInstance.longitude];
-            client.query(secondSQL,safeQuery);
+            client.query(secondSQL, safeQuery);
             return response.status(200).json(newLocationInstance);
           }).catch(error => {
             console.log(error);
           });
       } else if (data.rowCount === 1) {
-        // console.log(`${data} data from database is working`);
+        console.log(`${data}location data from database is working`);
         return response.status(200).json(data.rows[0]);
       }
     }).catch(error => {
@@ -116,6 +160,15 @@ function WeatherInfo(data) {
   this.time = new Date(data.valid_date).toDateString();
 }
 
+function MovieInfo(data){
+  this.title = data.original_title;
+  this.overview = data.overview;
+  this.average_votes = data.vote_average;
+  this.total_votes = data.vote_count;
+  this.image_url = `https://image.tmdb.org/t/p/w500${data.poster_path}`;
+  this.popularity = data.popularity;
+  this.released_on = data.release_date;
+}
 
 client.connect()
   .then(() => {
