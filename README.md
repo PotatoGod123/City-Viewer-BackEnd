@@ -5,7 +5,7 @@ This project will be using a pre built front end website to test out the functio
 
 
 
-**Version**: 1.3.0
+**Version**: 1.4.0
 
 # Contribution
 
@@ -64,9 +64,20 @@ Finish Time: 01:20am
 
 Actual time neeeded to comeplete: 2 Hours 30mins
 
+5. Added yelp and movies API into server, when called by routes they will send requested data back to the front end.
+
+Estimate of time needed to complete: 3 Hours
+
+Start Time: 05:30pm
+
+Finish Time: 06:50pm
+
+Actual time neeeded to comeplete: 1 Hours 30mins
+
+
 
 ## Architecture
-Using Javascript with Node.js and it's libraries and a couple of dependecies(dotenv,express,cors).  
+Using Javascript with Node.js and it's libraries and a couple of dependecies(dotenv,express,cors,superagent) while having a database as well using postgres.  
 
 ### WRRC 
 This is an image of WRRC for lab07
@@ -78,6 +89,9 @@ This image is the WRRC but with a database added now
 
 ## Change Log
 <!-- Use this area to document the iterative changes made to your application as each feature is successfully implemented. Use time stamps. Here's an examples: !-->
+
+01-09-2021 7:30pm Ver 1.4.0 - Added code into server.js with routes to movies and yelp with function handlders and constructors for each to tailor data and then send back to the front end as json information with response. Also changed database column name to keep same throught data crossing.
+
 01-07-2021 1:20am Ver 1.3.0 - Changed server code to use a database now, refactored code to only call API is information is not the database already, And if it is, it will use the date from there. Added schema.sql file as well.
 
 12-30-2020 10:40pm Ver 1.2.0  - Changed API to request from other APIs and use the promise data to convert and send back as a response to the front end request

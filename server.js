@@ -16,7 +16,7 @@ const app = express();
 const PORT = process.env.PORT;
 const client = new pg.Client(process.env.DATABASE_URL);
 
-
+// setting up cors and routes with function handlers as callback
 app.use(cors());
 
 app.get('/', rootRequest);
@@ -26,6 +26,8 @@ app.get('/location', locationFunction);
 app.get('/weather', weatherFunction);
 
 app.get('/movies', moviesFunction);
+
+app.get('/yelp', yelpFunction);
 
 app.use('*', catchAllRequest);
 //function handlers
@@ -65,7 +67,7 @@ function weatherFunction(request, response) {
         const dataTest = promise.body.data.map(val => {
           return new WeatherInfo(val);
         });
-        response.status(200).send(dataTest);
+        response.status(200).json(dataTest);
       }).catch(error => {
         console.log(error);
       });
@@ -78,15 +80,12 @@ function weatherFunction(request, response) {
 function moviesFunction(request, response) {
   const key = process.env.MOVIES_API_KEY;
 
-  
   //the query filters
   const queryObj = {
-    api_key : key,
-    query : request.query.search_query,
+    api_key: key,
+    query: request.query.search_query,
     include_adult: false
   };
-
-  
   const url = 'https://api.themoviedb.org/3/search/movie';
 
   if (flagTrigger) {
@@ -94,21 +93,54 @@ function moviesFunction(request, response) {
   } else {
     superagent.get(url)
       .query(queryObj)
-      .then( data =>{
+      .then(data => {
         const dataHolder = data.body.results;
-        if(dataHolder>20){
+        if (dataHolder > 20) {
           dataHolder.length = 20;
         }
-        const movieHolder = dataHolder.map(val=>{
+        const movieHolder = dataHolder.map(val => {
           return new MovieInfo(val);
         });
 
-        response.status(200).send(movieHolder);
-      }).catch(error=>{
+        response.status(200).json(movieHolder);
+      }).catch(error => {
         console.log(error);
       });
   }
+}
+//this function will request data from yelp api for resturants, refactored to only take 5 different ones at time
 
+
+function yelpFunction(request, response) {
+  const key = process.env.YELP_API_KEY;
+  const page = request.query.page || 1;
+  const amountPerPage = 5;
+  //need to subtract to offset the sent in page, then add it back in at the end
+  const start = ((page - 1) * amountPerPage + 1);
+  const url = 'https://api.yelp.com/v3/businesses/search';
+
+  const queryObj = {
+    latitude: request.query.latitude,
+    longitude: request.query.longitude,
+    limit: amountPerPage,
+    offset: start
+
+  };
+  if (flagTrigger) {
+    invalidInput(response);
+  } else {
+    superagent(url)
+      .auth(key, { type: 'bearer' })
+      .query(queryObj)
+      .then(data => {
+        const yelpInfo = data.body.businesses.map(val => {
+          return new YelpInfo(val);
+        });
+        response.status(200).json(yelpInfo);
+      }).catch(error => {
+        console.log(error);
+      });
+  }
 
 
 }
@@ -160,7 +192,7 @@ function WeatherInfo(data) {
   this.time = new Date(data.valid_date).toDateString();
 }
 
-function MovieInfo(data){
+function MovieInfo(data) {
   this.title = data.original_title;
   this.overview = data.overview;
   this.average_votes = data.vote_average;
@@ -168,6 +200,14 @@ function MovieInfo(data){
   this.image_url = `https://image.tmdb.org/t/p/w500${data.poster_path}`;
   this.popularity = data.popularity;
   this.released_on = data.release_date;
+}
+
+function YelpInfo(data) {
+  this.name= data.name;
+  this.image_url= data.image_url;
+  this.price = data.price;
+  this.rating = data.rating;
+  this.url = data.url;
 }
 
 client.connect()
