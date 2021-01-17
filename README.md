@@ -1,7 +1,7 @@
-# Back End Lab, City Viewer Lab-06-09
+# Back End, City Viewer 
 
 ## Overview
-This project will be using a pre built front end website to test out the functionality of the back-end side I am making. Using node and heroku to deploy and have a working server, the problem at hand is giving the front end part of the website information when calling the back end via ajax.
+This project will be using a front end website to test out the functionality of the back-end. Using node and heroku to deploy and have a working server, the problem at hand is serving the front end information when calling the back end via ajax by searching our database and giving them the data or via API calls.
 
 
 
@@ -77,7 +77,9 @@ Actual time neeeded to comeplete: 1 Hours 30mins
 
 
 ## Architecture
-Using Javascript with Node.js and it's libraries and a couple of dependecies(dotenv,express,cors,superagent) while having a database as well using postgres.  
+Languages: SQL, Javascript, HTML, CSS 
+Libraries: Express, superagent, postgress, CORS, dotenv
+
 
 ### WRRC 
 This is an image of WRRC for lab07
